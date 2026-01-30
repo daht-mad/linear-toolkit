@@ -1,0 +1,22 @@
+{
+  "name": "linear-toolkit",
+  "version": "1.0.0",
+  "description": "Linear 업무 자동화 플러그인: 이슈 생성, 프로젝트/이니셔티브 업데이트, 문서 관리",
+  "author": "dahye.dyan",
+  "skills": [
+    "create-issue",
+    "devlog-to-issue",
+    "update-proj",
+    "update-init",
+    "linear-doc"
+  ],
+  "mcp": {
+    "required": ["linear"]
+  },
+  "env": {
+    "LINEAR_API_TOKEN": {
+      "description": "Linear API 토큰 (스크립트용)",
+      "required": true
+    }
+  }
+}
