@@ -15,11 +15,13 @@ Linear 업무 자동화를 위한 Claude Code 플러그인.
 ## 설치
 
 ```bash
-# 방법 1: npx (마켓플레이스 등록 후)
-npx claude-plugins install linear-toolkit
+# 1. Git clone
+git clone https://github.com/daht-mad/linear-toolkit.git ~/.claude/plugins/linear-toolkit
 
-# 방법 2: Git clone
-git clone https://github.com/user/linear-toolkit.git ~/.claude/plugins/linear-toolkit
+# 2. 설치 스크립트 실행
+~/.claude/plugins/linear-toolkit/install.sh
+
+# 3. Claude Code 재시작
 ```
 
 ## 요구사항
