@@ -5,18 +5,41 @@ description: Linear 이슈 생성 커맨드. "/create-issue"로 호출하거나 
 
 # Linear 이슈 생성
 
-Linear에 이슈를 생성하는 스킬. 생성 전 사용자 확인을 받는다.
+Linear에 이슈를 생성하는 스킬. 맥락이 포함된 이슈 description을 자동 작성하고, 생성 전 사용자 확인을 받는다.
+
+## 이슈 템플릿
+
+모든 이슈는 아래 템플릿으로 description 작성:
+
+```markdown
+## 배경
+[왜 해야 하는지 - 문제 상황, 필요성]
+
+## 상세내용
+[구체적 맥락, 관련 데이터, 참고 문서, 결정 사항]
+
+## To Do
+- [ ] 할 일 1
+- [ ] 할 일 2
+```
+
+**작성 원칙:**
+- 배경: 이 이슈가 왜 필요한지 누구나 이해할 수 있게
+- 상세내용: 나중에 봐도 맥락을 파악할 수 있도록 충분히
+- To Do: 구체적이고 실행 가능한 단위로
 
 ## 워크플로우
 
-1. 사용자로부터 이슈 정보 수집 (제목, 설명 등)
-2. 프로젝트 목록 조회 (`list_projects` with `member: me`)
-3. **생성 전 확인**: 아래 정보를 사용자에게 표시하고 승인 요청
+1. 사용자로부터 이슈 정보 수집 (제목, 배경, 상세 등)
+2. 프로젝트 목록 조회 (`linear_getProjects`)
+3. 이슈 템플릿에 맞게 description 작성
+4. **생성 전 확인**: 아래 정보를 사용자에게 표시하고 승인 요청
    - 프로젝트
    - 제목
+   - description (미리보기)
    - 담당자 (기본값: me)
    - 상태 (기본값: Todo)
-4. 승인 후 이슈 생성
+5. 승인 후 이슈 생성
 
 ## 기본값
 
@@ -36,20 +59,30 @@ Linear에 이슈를 생성하는 스킬. 생성 전 사용자 확인을 받는�
 - **담당자**: [담당자명] (기본: 나)
 - **상태**: [상태] (기본: Todo)
 
+**Description 미리보기:**
+## 배경
+[내용...]
+
+## 상세내용
+[내용...]
+
+## To Do
+- [ ] ...
+
 진행할까요?
 ```
 
 ## 이슈 생성
 
-확인 후 `mcp__linear-server__create_issue` 호출:
+확인 후 `linear_createIssue` 호출:
 
 ```
-team: Education
+teamId: [팀 ID]
 title: [제목]
-description: [설명]
-project: [프로젝트 ID]
-assignee: me
-state: Todo
+description: [템플릿 기반 description]
+projectId: [프로젝트 ID]
+assigneeId: [담당자 ID]
+stateId: [Todo 상태 ID]
 ```
 
 ## 생성 완료 메시지
