@@ -8,7 +8,7 @@ SKILLS_DIR="$HOME/.claude/skills"
 mkdir -p "$SKILLS_DIR"
 
 # 심볼릭 링크 생성
-SKILLS=("create-issue" "devlog-to-issue" "update-proj" "update-init" "linear-doc")
+SKILLS=("create-issue" "devlog-to-issue" "update-proj" "update-init" "upload-doc")
 
 for skill in "${SKILLS[@]}"; do
   if [ -L "$SKILLS_DIR/$skill" ] || [ -d "$SKILLS_DIR/$skill" ]; then
