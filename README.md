@@ -20,7 +20,7 @@ Linear 업무 자동화를 위한 Claude Code 플러그인.
 > 이 데브로그 이슈로 등록해줘
 
 # 마크다운을 Linear 문서로
-> /linear-doc ./docs/spec.md "프로젝트명"
+> /upload-doc ./docs/spec.md "프로젝트명"
 
 # 이니셔티브 업데이트
 > /update-init
@@ -34,7 +34,7 @@ Linear 업무 자동화를 위한 Claude Code 플러그인.
 | `devlog-to-issue` | `/devlog-to-issue` | DEVLOG.md → Linear 이슈 변환 |
 | `update-proj` | `/update-proj` | 프로젝트 Cycle 업데이트 (결과물 중심) |
 | `update-init` | `/update-init` | 이니셔티브 업데이트 (프로젝트 종합) |
-| `linear-doc` | `/linear-doc` | 마크다운 → Linear 프로젝트 문서 |
+| `upload-doc` | `/upload-doc` | 마크다운 → Linear 프로젝트 문서 |
 
 ## 설치
 
@@ -78,7 +78,7 @@ git clone https://github.com/daht-mad/linear-toolkit.git ~/.claude/plugins/linea
 
 ### 3. API 토큰 설정
 
-일부 스킬(`update-proj`, `update-init`, `linear-doc`)은 MCP에 없는 API를 사용하므로 토큰이 필요합니다.
+일부 스킬(`update-proj`, `update-init`, `upload-doc`)은 MCP에 없는 API를 사용하므로 토큰이 필요합니다.
 
 **토큰 발급**: [Linear Settings > API](https://linear.app/settings/api) > Personal API keys > Create key
 
@@ -143,12 +143,12 @@ Cycle 기반으로 "만든 결과 / 만들 결과"를 자동 생성합니다.
 # 이슈를 생성할까요?
 ```
 
-### `/linear-doc` - 문서 추가
+### `/upload-doc` - 문서 추가
 
 마크다운 파일을 Linear 프로젝트의 Resources에 추가합니다.
 
 ```
-> /linear-doc ./docs/spec.md "커뮤니티 유지"
+> /upload-doc ./docs/spec.md "커뮤니티 유지"
 
 # 다음 문서를 Linear에 추가합니다:
 # - 제목: 파트너스 운영 스펙

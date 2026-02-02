@@ -1,21 +1,21 @@
 ---
-name: linear-doc
-description: 마크다운 파일을 Linear 프로젝트 Resources에 문서로 추가. "/linear-doc", "리니어에 문서 추가", "프로젝트에 md 파일 올려줘" 등으로 호출. Linear MCP에서 지원하지 않는 documentCreate API를 직접 호출.
+name: upload-doc
+description: 마크다운 파일을 Linear 프로젝트 Resources에 문서로 추가. "/upload-doc", "리니어에 문서 추가", "프로젝트에 md 파일 올려줘" 등으로 호출. Linear MCP에서 지원하지 않는 documentCreate API를 직접 호출.
 ---
 
-# Linear Document
+# Upload Document
 
 마크다운 파일을 Linear 프로젝트의 Resources에 문서로 추가한다.
 
 ## 사용법
 
 ```
-/linear-doc <파일경로> [프로젝트명]
+/upload-doc <파일경로> [프로젝트명]
 ```
 
 **예시:**
-- `/linear-doc ./docs/spec.md "커뮤니티 유지"`
-- `/linear-doc ~/plan.md` (대화형 프로젝트 선택)
+- `/upload-doc ./docs/spec.md "커뮤니티 유지"`
+- `/upload-doc ~/plan.md` (대화형 프로젝트 선택)
 
 ## 워크플로우
 
@@ -62,7 +62,7 @@ description: 마크다운 파일을 Linear 프로젝트 Resources에 문서로 �
 
 스크립트 실행:
 ```bash
-node ~/.claude/plugins/linear-toolkit/skills/linear-doc/scripts/create-doc.mjs "<파일경로>" "<프로젝트ID>" "<제목>"
+node ~/.claude/plugins/linear-toolkit/skills/upload-doc/scripts/create-doc.mjs "<파일경로>" "<프로젝트ID>" "<제목>"
 ```
 
 환경변수 `LINEAR_API_TOKEN` 필요.
