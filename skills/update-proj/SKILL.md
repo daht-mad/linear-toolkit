@@ -17,23 +17,29 @@ Linear 프로젝트 주간 업데이트를 **결과물 중심**으로 자동 생
 
 ### 1. 프로젝트 선택
 
-**Linear MCP 사용:**
+**스크립트 사용** (MCP에 멤버 정보 없음):
+```bash
+python ~/.claude/skills/update-proj/scripts/linear_api.py my-projects
 ```
-linear_getViewer() → 현재 사용자 ID
-linear_getProjects() → 내가 리드인 프로젝트 필터링
-```
-사용자에게 목록 제시 → 선택받기
+
+**필터링 조건:**
+- `state == "started"` 인 프로젝트만 표시 (in progress 상태)
+- 내가 **리드**이거나 **멤버**로 포함된 프로젝트만 표시
+- 리드 프로젝트 먼저, 멤버 프로젝트 나중에 정렬
+
+사용자에게 목록 제시 (역할 표시) → 선택받기
 
 ### 2. Cycle/이슈 수집
 
-**Linear MCP 사용:**
-```
-linear_getActiveCycle(teamId) → 현재 Cycle
-linear_getCycles(teamId) → 다음 Cycle
-linear_getProjectIssues(projectId) → 이슈 목록 + 상세
+**스크립트 사용** (Linear MCP의 state 필드 버그로 인해 직접 API 호출):
+```bash
+python ~/.claude/skills/update-proj/scripts/linear_api.py active-cycle <team_id>
+python ~/.claude/skills/update-proj/scripts/linear_api.py cycles <team_id>
+python ~/.claude/skills/update-proj/scripts/linear_api.py project-issues <project_id>
 ```
 - 현재 Cycle = **만든 결과**
 - 다음 Cycle = **만들 결과**
+- 이슈 상태(state.name, state.type)와 Cycle 정보 포함
 
 ### 3. 업데이트 작성
 
@@ -90,8 +96,10 @@ LINEAR_API_TOKEN=lin_api_xxxxxxxxxxxxx
 
 | 작업 | 방법 | 이유 |
 |------|------|------|
-| 조회 (viewer, projects, issues, cycles) | **Linear MCP** | 이미 로드되어 있음 |
+| 조회 (viewer, projects, issues, cycles) | **스크립트** | MCP의 state 필드 버그 (하위 필드 누락) |
 | `projectUpdateCreate` | **스크립트** | MCP에 없음 |
+
+> **참고**: Linear MCP의 이슈 조회 시 `state` 필드가 `{}`로 반환되는 버그 있음. 직접 GraphQL API 호출로 해결.
 
 ## 주의사항
 

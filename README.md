@@ -40,13 +40,18 @@ LINEAR_API_TOKEN=lin_api_xxxxxxxxxxxxx
 
 ## API 사용 방식
 
-| 기능 | 방법 |
-|------|------|
-| 조회 (이슈, 프로젝트, 이니셔티브 등) | Linear MCP |
-| 이슈 CRUD | Linear MCP |
-| `projectUpdateCreate` | 스크립트 |
-| `initiativeUpdateCreate` | 스크립트 |
-| `documentCreate` | 스크립트 |
+| 기능 | 방법 | 비고 |
+|------|------|------|
+| 이슈 조회 (state 필요) | **스크립트** | MCP의 state 필드 버그 |
+| 이슈 조회 (state 불필요) | Linear MCP | |
+| 이니셔티브/프로젝트 조회 | Linear MCP | |
+| 이슈 CRUD | Linear MCP | |
+| `projectUpdateCreate` | 스크립트 | MCP에 없음 |
+| `initiativeUpdateCreate` | 스크립트 | MCP에 없음 |
+| `documentCreate` | 스크립트 | MCP에 없음 |
+
+> **참고**: Linear MCP의 이슈 조회 시 `state` 필드가 `{}`로 반환되는 버그 있음.
+> 이슈 상태(Todo, In Progress, Done 등)가 필요한 경우 스크립트로 직접 API 호출.
 
 ## 라이선스
 

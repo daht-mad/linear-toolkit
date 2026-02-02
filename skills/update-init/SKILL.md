@@ -106,10 +106,12 @@ LINEAR_API_TOKEN=lin_api_xxxxxxxxxxxxx
 
 | 작업 | 방법 | 이유 |
 |------|------|------|
-| 이니셔티브 조회 | **Linear MCP** | `linear_getInitiatives()` |
+| 이니셔티브 조회 | **Linear MCP** | `linear_getInitiatives()` - state 필드 불필요 |
 | 이니셔티브-프로젝트 연결 | **Linear MCP** | `linear_getInitiativeProjects()` |
 | 프로젝트 업데이트 조회 | **스크립트** | MCP에 없음 |
 | `initiativeUpdateCreate` | **스크립트** | MCP에 없음 |
+
+> **참고**: 이슈 상태(state) 조회가 필요한 경우 MCP 대신 스크립트 사용 권장 (MCP의 state 필드 버그)
 
 ## 주의사항
 

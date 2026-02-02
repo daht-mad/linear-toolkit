@@ -78,8 +78,13 @@ def cmd_whoami(args):
     print(json.dumps(result['data']['viewer'], indent=2, ensure_ascii=False))
 
 def cmd_my_projects(args):
-    """내가 리드인 프로젝트 목록 조회"""
-    viewer = graphql_request('{ viewer { id } }')['data']['viewer']
+    """내가 리드이거나 멤버인 프로젝트 목록 조회 (started 상태만)"""
+    viewer_result = graphql_request('{ viewer { id } }')
+    if 'errors' in viewer_result:
+        print(f"Error: {viewer_result['errors']}", file=sys.stderr)
+        sys.exit(1)
+    viewer = viewer_result['data']['viewer']
+    my_id = viewer['id']
 
     query = '''
     query($first: Int!) {
@@ -87,32 +92,47 @@ def cmd_my_projects(args):
         nodes {
           id name state
           lead { id name }
+          members { nodes { id name } }
           teams { nodes { id name } }
         }
       }
     }
     '''
-    result = graphql_request(query, {'first': 100})
+    result = graphql_request(query, {'first': 50})
+    if 'errors' in result:
+        print(f"Error: {result['errors']}", file=sys.stderr)
+        sys.exit(1)
 
-    my_projects = [
-        p for p in result['data']['projects']['nodes']
-        if p.get('lead') and p['lead']['id'] == viewer['id']
-        and p['state'] not in ['canceled', 'completed']
-    ]
+    my_projects = []
+    for p in result['data']['projects']['nodes']:
+        # started 상태만 유효
+        if p['state'] != 'started':
+            continue
+
+        is_lead = p.get('lead') and p['lead']['id'] == my_id
+        is_member = any(m['id'] == my_id for m in p.get('members', {}).get('nodes', []))
+
+        if is_lead or is_member:
+            p['_role'] = 'lead' if is_lead else 'member'
+            my_projects.append(p)
+
+    # 리드 프로젝트 먼저, 그 다음 멤버 프로젝트 (이름순 정렬)
+    my_projects.sort(key=lambda x: (0 if x['_role'] == 'lead' else 1, x['name']))
 
     print(json.dumps(my_projects, indent=2, ensure_ascii=False))
 
 def cmd_project_issues(args):
-    """프로젝트 이슈 목록 조회"""
+    """프로젝트 이슈 목록 조회 (state, cycle 포함)"""
     query = '''
     query($id: String!) {
       project(id: $id) {
-        issues(first: 100) {
+        issues(first: 50) {
           nodes {
             id identifier title
             state { name type }
             cycle { id number startsAt endsAt }
             assignee { name }
+            priority
             description
           }
         }
@@ -120,22 +140,42 @@ def cmd_project_issues(args):
     }
     '''
     result = graphql_request(query, {'id': args.project_id})
+    if 'errors' in result:
+        print(f"Error: {result['errors']}", file=sys.stderr)
+        sys.exit(1)
     print(json.dumps(result['data']['project']['issues']['nodes'], indent=2, ensure_ascii=False))
 
 def cmd_active_cycle(args):
-    """팀의 활성 Cycle 및 다음 Cycle 조회"""
+    """팀의 활성 Cycle 조회"""
     query = '''
     query($id: String!) {
       team(id: $id) {
         activeCycle { id number startsAt endsAt }
-        cycles(first: 5) {
+      }
+    }
+    '''
+    result = graphql_request(query, {'id': args.team_id})
+    if 'errors' in result:
+        print(f"Error: {result['errors']}", file=sys.stderr)
+        sys.exit(1)
+    print(json.dumps(result['data']['team']['activeCycle'], indent=2, ensure_ascii=False))
+
+def cmd_cycles(args):
+    """팀의 Cycle 목록 조회"""
+    query = '''
+    query($id: String!, $first: Int!) {
+      team(id: $id) {
+        cycles(first: $first, orderBy: { startsAt: DESC }) {
           nodes { id number startsAt endsAt }
         }
       }
     }
     '''
-    result = graphql_request(query, {'id': args.team_id})
-    print(json.dumps(result['data']['team'], indent=2, ensure_ascii=False))
+    result = graphql_request(query, {'id': args.team_id, 'first': args.limit})
+    if 'errors' in result:
+        print(f"Error: {result['errors']}", file=sys.stderr)
+        sys.exit(1)
+    print(json.dumps(result['data']['team']['cycles']['nodes'], indent=2, ensure_ascii=False))
 
 def cmd_create_update(args):
     """프로젝트 업데이트 생성"""
@@ -180,6 +220,10 @@ def main():
     p = subparsers.add_parser('active-cycle', help='팀의 활성 Cycle')
     p.add_argument('team_id', help='팀 ID')
 
+    p = subparsers.add_parser('cycles', help='팀의 Cycle 목록')
+    p.add_argument('team_id', help='팀 ID')
+    p.add_argument('--limit', type=int, default=5, help='조회할 Cycle 수')
+
     p = subparsers.add_parser('create-update', help='프로젝트 업데이트 생성')
     p.add_argument('project_id', help='프로젝트 ID')
     p.add_argument('body_file', help='업데이트 내용 마크다운 파일')
@@ -193,6 +237,7 @@ def main():
         'my-projects': cmd_my_projects,
         'project-issues': cmd_project_issues,
         'active-cycle': cmd_active_cycle,
+        'cycles': cmd_cycles,
         'create-update': cmd_create_update,
     }
 
