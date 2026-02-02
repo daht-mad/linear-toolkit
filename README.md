@@ -44,7 +44,7 @@ Claude Code 설정에서 Linear MCP를 추가합니다.
 
 **방법 A: Claude Code 명령어**
 ```bash
-claude mcp add linear -- npx -y @linear/mcp-server
+claude mcp add linear -- npx -y @tacticlaunch/mcp-linear
 ```
 
 **방법 B: 수동 설정** (`~/.mcp.json` 또는 `.mcp.json`)
@@ -53,13 +53,16 @@ claude mcp add linear -- npx -y @linear/mcp-server
   "mcpServers": {
     "linear": {
       "command": "npx",
-      "args": ["-y", "@linear/mcp-server"]
+      "args": ["-y", "@tacticlaunch/mcp-linear"],
+      "env": {
+        "LINEAR_API_TOKEN": "${LINEAR_API_TOKEN}"
+      }
     }
   }
 }
 ```
 
-> Linear MCP 첫 실행 시 브라우저에서 OAuth 인증이 진행됩니다.
+> `LINEAR_API_TOKEN` 환경변수가 필요합니다. `.env` 파일에 설정하세요.
 
 ### 2. 플러그인 설치
 
