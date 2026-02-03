@@ -34,7 +34,6 @@ Linear 업무 자동화를 위한 Claude Code 플러그인.
 | `devlog-to-issue` | `/devlog-to-issue` | DEVLOG.md → Linear 이슈 변환 |
 | `update-proj` | `/update-proj` | 프로젝트 Cycle 업데이트 (결과물 중심) |
 | `update-init` | `/update-init` | 이니셔티브 업데이트 (프로젝트 종합) |
-| `upload-doc` | `/upload-doc` | 마크다운 → Linear 프로젝트 문서 |
 
 ## 설치
 
