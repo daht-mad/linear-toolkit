@@ -13,32 +13,26 @@ description: Linear 프로젝트의 Cycle 기반 업데이트를 결과물 중�
 - 맥락 포함 (기존 문제 → 변경 사항 → 완료 작업)
 - 이슈 번호 생략, ~요/~합니다 말투 금지
 
-## 스크립트 (Linear MCP 버그 우회)
+## MCP 도구
 
-Linear MCP의 state 필드 버그로 스크립트 사용:
-
-```bash
-# 내 프로젝트 목록 (started 상태, 리드/멤버)
-python scripts/linear_api.py my-projects
-
-# 프로젝트 이슈 (state, cycle 포함)
-python scripts/linear_api.py project-issues <project_id>
-
-# Cycle 정보
-python scripts/linear_api.py active-cycle <team_id>
-python scripts/linear_api.py cycles <team_id>
-
-# 업데이트 등록 (MCP에 없음)
-python scripts/linear_api.py create-update <project_id> /tmp/update.md --health onTrack
-```
+| 용도 | MCP 도구 |
+|------|----------|
+| 현재 사용자 | `linear_getViewer` |
+| 프로젝트 목록 | `linear_getProjects` |
+| 프로젝트 이슈 | `linear_getProjectIssues(projectId)` |
+| 활성 사이클 | `linear_getActiveCycle(teamId)` |
+| 사이클 목록 | `linear_getCycles` |
+| 업데이트 생성 | `linear_projectUpdateCreate(projectId, body, health?)` |
 
 ## 워크플로우
 
 ### 1. 프로젝트 선택
 
-`my-projects` 스크립트로 내가 리드/멤버인 started 프로젝트 조회 → 사용자 선택
+`linear_getProjects` + `linear_getViewer`로 내가 리드/멤버인 `state: "started"` 프로젝트 조회 → 사용자 선택
 
 ### 2. Cycle/이슈 수집
+
+`linear_getProjectIssues`로 프로젝트 이슈 조회 (state 필드 정상 반환)
 
 - 현재 Cycle 이슈 = **만든 결과**
 - 다음 Cycle 이슈 = **만들 결과**
@@ -81,13 +75,5 @@ python scripts/linear_api.py create-update <project_id> /tmp/update.md --health 
 
 1. 사용자 확인: "Linear에 바로 올릴까요?"
 2. health 선택: 🟢 onTrack / 🟡 atRisk / 🔴 offTrack
-3. `create-update` 스크립트 실행
+3. `linear_projectUpdateCreate` MCP 도구 호출
 4. 등록된 URL 반환
-
-## 환경변수
-
-```
-LINEAR_API_TOKEN=lin_api_xxxxxxxxxxxxx
-```
-
-.env 파일 위치: 프로젝트 루트 또는 `~/.env`

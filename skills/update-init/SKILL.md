@@ -14,32 +14,26 @@ description: 이니셔티브의 Cycle 기반 업데이트를 하위 프로젝트
 - 팀 전체가 이해할 수 있는 비즈니스 언어
 - Health는 하위 프로젝트 기반 자동 종합
 
-## 스크립트
+## MCP 도구
 
-```bash
-# 내 이니셔티브 목록 (owner, Active/Planned)
-python scripts/linear_api.py my-initiatives
-
-# 이니셔티브의 프로젝트 목록
-python scripts/linear_api.py initiative-projects <initiative_id>
-
-# 프로젝트의 최근 업데이트
-python scripts/linear_api.py project-updates <project_id> --limit 3
-
-# 이니셔티브 업데이트 등록 (MCP에 없음)
-python scripts/linear_api.py create-initiative-update <initiative_id> /tmp/update.md --health onTrack
-```
+| 용도 | MCP 도구 |
+|------|----------|
+| 현재 사용자 | `linear_getViewer` |
+| 이니셔티브 목록 | `linear_getInitiatives` |
+| 이니셔티브 프로젝트 | `linear_getInitiativeProjects(initiativeId)` |
+| 프로젝트 업데이트 조회 | `linear_getProjectUpdates(projectId, limit?)` |
+| 업데이트 생성 | `linear_initiativeUpdateCreate(initiativeId, body, health?)` |
 
 ## 워크플로우
 
 ### 1. 이니셔티브 선택
 
-`linear_getInitiatives` MCP 또는 `my-initiatives` 스크립트로 조회 → 사용자 선택
+`linear_getInitiatives` + `linear_getViewer`로 내가 owner인 `status: "Active"` 또는 `"Planned"` 이니셔티브 조회 → 사용자 선택
 
 ### 2. 하위 프로젝트 업데이트 수집
 
-- `linear_getInitiativeProjects` MCP로 프로젝트 목록
-- `project-updates` 스크립트로 각 프로젝트의 최근 업데이트
+- `linear_getInitiativeProjects`로 프로젝트 목록
+- `linear_getProjectUpdates`로 각 프로젝트의 최근 업데이트 조회
 
 ### 3. 업데이트 작성
 
@@ -83,13 +77,5 @@ python scripts/linear_api.py create-initiative-update <initiative_id> /tmp/updat
 
 1. 사용자 확인: "Linear에 바로 올릴까요?"
 2. health 선택 (자동 종합 결과 또는 수동)
-3. `create-initiative-update` 스크립트 실행
+3. `linear_initiativeUpdateCreate` MCP 도구 호출
 4. 등록된 URL 반환
-
-## 환경변수
-
-```
-LINEAR_API_TOKEN=lin_api_xxxxxxxxxxxxx
-```
-
-.env 파일 위치: 프로젝트 루트 또는 `~/.env`

@@ -44,7 +44,7 @@ Claude Code 설정에서 Linear MCP를 추가합니다.
 
 **방법 A: Claude Code 명령어**
 ```bash
-claude mcp add linear -- npx -y @tacticlaunch/mcp-linear
+claude mcp add linear -- npx -y @daht-mad/linear-mcp-plus
 ```
 
 **방법 B: 수동 설정** (`~/.mcp.json` 또는 `.mcp.json`)
@@ -53,7 +53,7 @@ claude mcp add linear -- npx -y @tacticlaunch/mcp-linear
   "mcpServers": {
     "linear": {
       "command": "npx",
-      "args": ["-y", "@tacticlaunch/mcp-linear"],
+      "args": ["-y", "@daht-mad/linear-mcp-plus"],
       "env": {
         "LINEAR_API_TOKEN": "${LINEAR_API_TOKEN}"
       }
@@ -62,7 +62,9 @@ claude mcp add linear -- npx -y @tacticlaunch/mcp-linear
 }
 ```
 
-> `LINEAR_API_TOKEN` 환경변수가 필요합니다. `.env` 파일에 설정하세요.
+**토큰 발급**: [Linear Settings > API](https://linear.app/settings/api) > Personal API keys > Create key
+
+> `@daht-mad/linear-mcp-plus`는 기존 `@tacticlaunch/mcp-linear`의 버그를 수정하고, 프로젝트/이니셔티브 업데이트, 문서 생성 등 추가 도구를 포함합니다.
 
 ### 2. 플러그인 설치
 
@@ -74,21 +76,6 @@ git clone https://github.com/daht-mad/linear-toolkit.git ~/.claude/plugins/linea
 ~/.claude/plugins/linear-toolkit/install.sh
 
 # Claude Code 재시작
-```
-
-### 3. API 토큰 설정
-
-일부 스킬(`update-proj`, `update-init`, `upload-doc`)은 MCP에 없는 API를 사용하므로 토큰이 필요합니다.
-
-**토큰 발급**: [Linear Settings > API](https://linear.app/settings/api) > Personal API keys > Create key
-
-**설정 위치** (둘 중 하나):
-```bash
-# 프로젝트별
-echo "LINEAR_API_TOKEN=lin_api_xxxxx" >> ./.env
-
-# 전역
-echo "LINEAR_API_TOKEN=lin_api_xxxxx" >> ~/.env
 ```
 
 ## 스킬별 상세
@@ -156,36 +143,6 @@ Cycle 기반으로 "만든 결과 / 만들 결과"를 자동 생성합니다.
 #
 # 진행할까요?
 ```
-
-## 알려진 이슈
-
-### Linear MCP state 필드 버그
-
-Linear MCP의 이슈 조회 시 `state` 필드가 `{}`로 반환되는 버그가 있습니다.
-
-```json
-// MCP 응답
-{ "state": {} }  // 비어있음
-
-// 정상 응답
-{ "state": { "name": "Done", "type": "completed" } }
-```
-
-**영향받는 스킬**: `update-proj` (이슈 상태 필요)
-
-**해결**: 스크립트로 직접 GraphQL API 호출 (자동 적용됨)
-
-## API 사용 방식
-
-| 기능 | 방법 | 이유 |
-|------|------|------|
-| 이슈 조회 (state 필요) | 스크립트 | MCP 버그 |
-| 이슈 조회 (state 불필요) | Linear MCP | |
-| 이니셔티브/프로젝트 조회 | Linear MCP | |
-| 이슈 CRUD | Linear MCP | |
-| `projectUpdateCreate` | 스크립트 | MCP 미지원 |
-| `initiativeUpdateCreate` | 스크립트 | MCP 미지원 |
-| `documentCreate` | 스크립트 | MCP 미지원 |
 
 ## 라이선스
 

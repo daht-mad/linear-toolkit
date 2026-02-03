@@ -67,3 +67,59 @@ ID: EDU-5580
 ```
 
 `linear_updateIssue`의 `id` 파라미터에 "EDU-5580" 형태로 전달.
+
+## 확장 도구 (@daht-mad/linear-mcp-plus)
+
+### linear_projectUpdateCreate
+프로젝트 업데이트 생성. 주간/스프린트 진행 보고용.
+
+```
+필수: projectId, body (마크다운)
+선택: health (onTrack | atRisk | offTrack)
+```
+
+### linear_initiativeUpdateCreate
+이니셔티브 업데이트 생성. 상위 이니셔티브 진행 보고용.
+
+```
+필수: initiativeId, body (마크다운)
+선택: health (onTrack | atRisk | offTrack)
+```
+
+### linear_documentCreate
+Linear 문서 생성. 프로젝트 Resources에 문서 추가.
+
+```
+필수: title, content (마크다운)
+선택: projectId (프로젝트에 연결 시)
+```
+
+### linear_getProjectUpdates
+프로젝트 업데이트 목록 조회.
+
+```
+필수: projectId
+선택: limit (기본: 25)
+```
+
+### linear_updateProjectLead
+프로젝트 리드 변경.
+
+```
+필수: projectId, leadId (null이면 리드 제거)
+```
+
+### linear_getInitiatives
+이니셔티브 목록 조회.
+
+```
+선택: includeArchived (기본: false), limit (기본: 50)
+```
+
+### linear_getInitiativeProjects
+이니셔티브에 연결된 프로젝트 목록 조회.
+
+```
+필수: initiativeId
+선택: includeArchived (기본: false)
+```
