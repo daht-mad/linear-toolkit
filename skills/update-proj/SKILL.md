@@ -18,7 +18,7 @@ description: Linear 프로젝트의 Cycle 기반 업데이트를 결과물 중�
 | 용도 | MCP 도구 |
 |------|----------|
 | 현재 사용자 | `linear_getViewer` |
-| 프로젝트 목록 | `linear_getProjects` |
+| 내 이슈 조회 | `linear_searchIssues(assigneeId, limit)` |
 | 프로젝트 이슈 | `linear_getProjectIssues(projectId)` |
 | 활성 사이클 | `linear_getActiveCycle(teamId)` |
 | 사이클 목록 | `linear_getCycles` |
@@ -28,7 +28,23 @@ description: Linear 프로젝트의 Cycle 기반 업데이트를 결과물 중�
 
 ### 1. 프로젝트 선택
 
-`linear_getProjects` + `linear_getViewer`로 내가 리드/멤버인 `state: "started"` 프로젝트 조회 → 사용자 선택
+> **[CRITICAL] 내가 담당한 이슈가 있는 started 프로젝트만 조회**
+>
+> `linear_getProjects` 사용 금지 - 전체 프로젝트 반환 & 결과 truncate 문제
+
+**조회 방법 (필수 순서):**
+
+1. `linear_getViewer` → 현재 사용자 ID 확인
+2. `linear_searchIssues(assigneeId=사용자ID, limit=50)` → 내가 담당한 이슈 조회
+3. 이슈들의 `project` 필드에서 **unique한 프로젝트 추출**
+4. 프로젝트 중 `state: "started"` 인 것만 필터링
+5. 번호 매긴 목록으로 사용자에게 제시
+
+**필터링 조건:**
+- ✅ 내가 assignee인 이슈가 있는 프로젝트
+- ✅ state가 "started"인 프로젝트
+- ❌ 내 이슈가 없는 프로젝트 제외
+- ❌ planned/backlog/completed/canceled 상태 제외
 
 ### 2. Cycle/이슈 수집
 
