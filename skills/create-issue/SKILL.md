@@ -93,25 +93,48 @@ description: "[MANDATORY - NEVER BYPASS] MUST use this skill for ALL Linear issu
 
 ---
 
-## 기본값
+## 기본값 (MANDATORY - 모든 이슈에 적용)
 
-| 항목 | 기본값 | ID |
-|------|--------|-----|
-| 담당자 | `me` (linear_getViewer로 조회) | - |
-| 상태 | `Todo` | `6dc4154e-3a35-43d2-ac44-e3d66df85c9b` |
-| 팀 | `Education` | - |
+| 항목 | 기본값 | 강제 여부 |
+|------|--------|----------|
+| 담당자 | Step 0에서 조회한 viewer ID | **필수** |
+| 상태 | Todo (`6dc4154e-3a35-43d2-ac44-e3d66df85c9b`) | **필수** |
+| 팀 | Education (`e108ae14-a354-4c09-86ac-6c1186bc6132`) | **필수** |
+| 프로젝트 | 사용자가 선택 | **필수** |
 
 ---
 
 ## 워크플로우
 
+### Step 0: 초기 데이터 조회 (MANDATORY - 모든 이슈 생성 전 실행)
+
+**반드시 실행**:
+```
+1. linear_getViewer 호출 → viewer.id 저장 (담당자로 사용)
+2. linear_getProjects 호출 → 활성 프로젝트 목록 저장
+```
+
+**저장할 값**:
+- `VIEWER_ID`: viewer.id (예: "b8ea8eaa-a355-46e2-8e3b-fb15c1f0aae9")
+- `ACTIVE_PROJECTS`: state가 "started" 또는 "planned"인 프로젝트들
+
 ### Step 1: 정보 수집
 - 사용자로부터 이슈 제목, 내용 수집
-- 프로젝트 지정 여부 확인
 
-### Step 2: 프로젝트 조회
-- `linear_getProjects` 호출
-- 활성 프로젝트 목록 표시 (state: "started" 또는 "planned")
+### Step 2: 프로젝트 선택 (MANDATORY)
+
+**프로젝트는 필수입니다. 반드시 선택받아야 합니다.**
+
+활성 프로젝트 목록을 보여주고 선택받기:
+```
+프로젝트를 선택해주세요:
+
+1. [프로젝트명 A]
+2. [프로젝트명 B]
+...
+
+(프로젝트 없이는 이슈를 생성할 수 없습니다)
+```
 
 ### Step 3: Description 작성
 - 위 템플릿 형식으로 description 구성
@@ -122,10 +145,10 @@ description: "[MANDATORY - NEVER BYPASS] MUST use this skill for ALL Linear issu
 ```
 이슈를 생성합니다. 확인해주세요:
 
-- **프로젝트**: [프로젝트명]
+- **프로젝트**: [프로젝트명] ← 필수
 - **제목**: [이슈 제목]
-- **담당자**: [담당자명] (기본: 나)
-- **상태**: Todo
+- **담당자**: 송다혜 (나) ← 자동 설정
+- **상태**: Todo ← 자동 설정
 
 **Description 미리보기:**
 ---
@@ -140,15 +163,20 @@ description: "[MANDATORY - NEVER BYPASS] MUST use this skill for ALL Linear issu
 **승인 후** `linear_createIssue` 호출:
 
 ```
-파라미터:
+파라미터 (모두 필수):
 - title: [제목]
-- teamId: [팀 ID]
+- teamId: "e108ae14-a354-4c09-86ac-6c1186bc6132"  ← Education 팀
 - description: [템플릿 기반 내용]
-- stateId: "6dc4154e-3a35-43d2-ac44-e3d66df85c9b"  ← MANDATORY
-- assigneeId: [담당자 ID 또는 me]
-- projectId: [프로젝트 ID] (선택)
+- stateId: "6dc4154e-3a35-43d2-ac44-e3d66df85c9b"  ← Todo 상태 (NEVER OMIT)
+- assigneeId: [Step 0에서 조회한 VIEWER_ID]  ← 자동 설정 (NEVER OMIT)
+- projectId: [Step 2에서 선택한 프로젝트 ID]  ← 필수 (NEVER OMIT)
 - cycleId: [사이클 ID] (선택)
 ```
+
+**절대 금지**:
+- stateId 생략 → Triage로 생성됨
+- assigneeId 생략 → 담당자 없음
+- projectId 생략 → 프로젝트 미연결
 
 ### Step 6: 결과 반환
 
@@ -157,4 +185,7 @@ description: "[MANDATORY - NEVER BYPASS] MUST use this skill for ALL Linear issu
 
 - **ID**: EDU-1234
 - **링크**: https://linear.app/geniefy/issue/EDU-1234
+- **프로젝트**: [프로젝트명]
+- **담당자**: 송다혜
+- **상태**: Todo
 ```
