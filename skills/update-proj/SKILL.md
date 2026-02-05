@@ -48,10 +48,26 @@ description: Linear 프로젝트의 Cycle 기반 업데이트를 결과물 중�
 
 ### 2. Cycle/이슈 수집
 
-`linear_getProjectIssues`로 프로젝트 이슈 조회 (state 필드 정상 반환)
+> **[CRITICAL] 사이클 필터링 필수**
+>
+> `linear_getProjectIssues`는 프로젝트 전체 이슈를 반환함.
+> 사이클 필터링 없이 Done 이슈를 사용하면 **과거 사이클 완료 이슈가 포함됨**.
 
-- 현재 Cycle 이슈 = **만든 결과**
-- 다음 Cycle 이슈 = **만들 결과**
+**필수 순서:**
+
+1. `linear_getActiveCycle(teamId)` → 현재 사이클 ID 확인
+2. `linear_getProjectIssues(projectId)` → 전체 이슈 조회
+3. **사이클 필터링**:
+   - 각 이슈의 `cycle.id`를 확인
+   - 현재 사이클 ID와 일치하는 이슈만 추출
+   - 다른 사이클(과거/미래) 이슈는 별도 분류
+
+**분류 기준:**
+
+| 구분 | 조건 |
+|------|------|
+| **만든 결과** | 현재 사이클 + state: Done |
+| **만들 결과** | 현재 사이클 + state: Todo/In Progress + **다음 사이클 이슈** |
 
 ### 3. 업데이트 작성
 
